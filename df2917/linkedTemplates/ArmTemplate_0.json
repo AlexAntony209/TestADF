@@ -509,7 +509,14 @@
 								"type": "DatasetReference",
 								"parameters": {}
 							},
-							"enableLogging": false,
+							"logStorageSettings": {
+								"linkedServiceName": {
+									"referenceName": "TestBlobStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "adf-input"
+							},
+							"enableLogging": true,
 							"storeSettings": {
 								"type": "AzureBlobStorageReadSettings",
 								"recursive": true,
@@ -539,7 +546,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/TxtFilePath')]"
+				"[concat(variables('factoryId'), '/datasets/TxtFilePath')]",
+				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
 			]
 		},
 		{
