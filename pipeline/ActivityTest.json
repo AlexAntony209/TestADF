@@ -39,7 +39,14 @@
 						"referenceName": "TxtFilePath",
 						"type": "DatasetReference"
 					},
-					"enableLogging": false,
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "TestBlobStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "adf-input"
+					},
+					"enableLogging": true,
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
