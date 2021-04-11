@@ -1,0 +1,27 @@
+{
+	"name": "ExecutePipelineActivityTest",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ActivityTest",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"FileName": "DailySales"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "Demo"
+		},
+		"annotations": []
+	}
+}
