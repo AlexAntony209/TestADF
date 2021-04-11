@@ -49,10 +49,7 @@
 					"enableLogging": true,
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
-						"fileListPath": {
-							"value": "@concat(variables('FileType'),'List.txt')",
-							"type": "Expression"
-						},
+						"fileListPath": "adf-output/FileList.docx",
 						"enablePartitionDiscovery": false
 					}
 				}
