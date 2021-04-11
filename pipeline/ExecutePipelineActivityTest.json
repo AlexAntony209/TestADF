@@ -6,7 +6,12 @@
 				"name": "Execute Pipeline1",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
-				"userProperties": [],
+				"userProperties": [
+					{
+						"name": "ExcecutePipeline",
+						"value": "Execute pipeline from activity"
+					}
+				],
 				"typeProperties": {
 					"pipeline": {
 						"referenceName": "ActivityTest",
