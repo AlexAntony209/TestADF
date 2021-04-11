@@ -13,14 +13,7 @@
 					}
 				],
 				"typeProperties": {
-					"pipeline": {
-						"referenceName": "ActivityTest",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true,
-					"parameters": {
-						"FileName": "DailySales"
-					}
+					"waitOnCompletion": true
 				}
 			}
 		],
