@@ -53,7 +53,7 @@
 								"storedProcedureParameters": {
 									"Activity": {
 										"value": {
-											"value": "@pipeline().DataFactory",
+											"value": "@pipeline().Pipeline",
 											"type": "Expression"
 										},
 										"type": "String"
