@@ -52,7 +52,10 @@
 								"storedProcedureName": "[dbo].[TestActivity]",
 								"storedProcedureParameters": {
 									"Activity": {
-										"value": "TestSPCall",
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"item": {
