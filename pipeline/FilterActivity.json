@@ -32,7 +32,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('File Filter').output",
+						"value": "@array(activity('File Filter').output.value)",
 						"type": "Expression"
 					},
 					"activities": [
