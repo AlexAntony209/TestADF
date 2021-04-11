@@ -404,6 +404,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "DailyList.txt",
 						"container": "adf-output"
 					}
 				}
@@ -579,11 +580,7 @@
 							"enableLogging": true,
 							"storeSettings": {
 								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
-								"wildcardFileName": {
-									"value": "concat(@{variables('FileType')},'.txt')",
-									"type": "Expression"
-								},
+								"fileListPath": "adf-output/FileList.docx",
 								"enablePartitionDiscovery": false
 							}
 						}
@@ -608,6 +605,43 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/TxtFilePath')]",
 				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExecutePipelineActivityTest')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Execute Pipeline1",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [
+							{
+								"name": "ExcecutePipeline",
+								"value": "Execute pipeline from activity"
+							}
+						],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ActivityTest",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"FileName": "DailySales"
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "Demo"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ActivityTest')]"
 			]
 		}
 	]
