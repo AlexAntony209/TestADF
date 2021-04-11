@@ -1,0 +1,288 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "df2917"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyPipeline_ffx')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy_ffx",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "adf-input//Temp.xlsx"
+							},
+							{
+								"name": "Destination",
+								"value": "dbo.Test1"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "ExcelSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": false,
+							"validateDataConsistency": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Start Date",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Start Date",
+											"type": "DateTime",
+											"physicalType": "date"
+										}
+									},
+									{
+										"source": {
+											"name": "End Date",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "End Date",
+											"type": "DateTime",
+											"physicalType": "date"
+										}
+									},
+									{
+										"source": {
+											"name": "Link (Product Code)",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Link (Product Code)",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "ExperiationDate",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "ExperiationDate",
+											"type": "DateTime",
+											"physicalType": "date"
+										}
+									},
+									{
+										"source": {
+											"name": "IsDeleted",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "IsDeleted",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "Supplier",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Supplier",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Search Term",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Search Term",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Display Order",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Display Order",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_ffx",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DestinationDataset_ffx",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "Demo"
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-04-09T19:26:49Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Every 5 mins on Event')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "DeletePipeline",
+							"type": "PipelineReference"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/adf-output/blobs/",
+					"ignoreEmptyBlobs": true,
+					"scope": "/subscriptions/384a0a14-b856-4b55-a480-d4582287b1f9/resourceGroups/rg_storageAccount/providers/Microsoft.Storage/storageAccounts/azureblobstorage2917",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ActivityTest')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set value for file type",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "FileType",
+							"value": {
+								"value": "@replace(pipeline().parameters.FileName,'Sales','')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Delete file",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Set value for file type",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "TxtFilePath",
+								"type": "DatasetReference"
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"wildcardFileName": {
+									"value": "@{variables('FileType')}",
+									"type": "Expression"
+								},
+								"enablePartitionDiscovery": false
+							}
+						}
+					}
+				],
+				"parameters": {
+					"FileName": {
+						"type": "string",
+						"defaultValue": "DailySales"
+					}
+				},
+				"variables": {
+					"FileType": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Demo"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}

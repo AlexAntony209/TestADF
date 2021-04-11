@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "df2917"
+		},
+		"AzureSqlDatabase_connectionString": {
+			"value": ""
+		},
+		"TestBlobStorage_connectionString": {
+			"value": ""
+		},
+		"TestSQLConnectionParameter_connectionString": {
+			"value": ""
+		},
+		"Every 5 mins on Event_properties_typeProperties_scope": {
+			"value": "/subscriptions/384a0a14-b856-4b55-a480-d4582287b1f9/resourceGroups/rg_storageAccount/providers/Microsoft.Storage/storageAccounts/azureblobstorage2917"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

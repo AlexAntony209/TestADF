@@ -1,0 +1,70 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "df2917"
+		},
+		"AzureSqlDatabase_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
+		},
+		"TestBlobStorage_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'TestBlobStorage'"
+		},
+		"TestSQLConnectionParameter_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'TestSQLConnectionParameter'"
+		},
+		"Every 5 mins on Event_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/384a0a14-b856-4b55-a480-d4582287b1f9/resourceGroups/rg_storageAccount/providers/Microsoft.Storage/storageAccounts/azureblobstorage2917"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "df2917_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureSqlDatabase_connectionString": {
+						"value": "[parameters('AzureSqlDatabase_connectionString')]"
+					},
+					"TestBlobStorage_connectionString": {
+						"value": "[parameters('TestBlobStorage_connectionString')]"
+					},
+					"TestSQLConnectionParameter_connectionString": {
+						"value": "[parameters('TestSQLConnectionParameter_connectionString')]"
+					},
+					"Every 5 mins on Event_properties_typeProperties_scope": {
+						"value": "[parameters('Every 5 mins on Event_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
