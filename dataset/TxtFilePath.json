@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"fileName": "DailyList.txt",
 				"container": "adf-output"
 			}
 		}
