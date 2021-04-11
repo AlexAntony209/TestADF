@@ -29,6 +29,87 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/ActivityTest')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Set value for file type",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "FileType",
+							"value": {
+								"value": "@replace(pipeline().parameters.FileName,'Sales','')",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Delete file",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Set value for file type",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "TxtFilePath",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"logStorageSettings": {
+								"linkedServiceName": {
+									"referenceName": "TestBlobStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "adf-input"
+							},
+							"enableLogging": true,
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"fileListPath": "adf-output/FileList.docx",
+								"enablePartitionDiscovery": false
+							}
+						}
+					}
+				],
+				"parameters": {
+					"FileName": {
+						"type": "string",
+						"defaultValue": "DailySales"
+					}
+				},
+				"variables": {
+					"FileType": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Demo"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/TxtFilePath')]",
+				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CopyPipeline_ffx')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -259,6 +340,43 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/TxtFilePath')]",
 				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ExecutePipelineActivityTest')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Execute Pipeline1",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [
+							{
+								"name": "ExcecutePipeline",
+								"value": "Execute pipeline from activity"
+							}
+						],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ActivityTest",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"FileName": "DailySales"
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "Demo"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ActivityTest')]"
 			]
 		},
 		{
@@ -527,74 +645,99 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ActivityTest')]",
+			"name": "[concat(parameters('factoryName'), '/FilterActivity')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Set value for file type",
-						"type": "SetVariable",
+						"name": "File Filter",
+						"type": "Filter",
 						"dependsOn": [],
 						"userProperties": [],
 						"typeProperties": {
-							"variableName": "FileType",
-							"value": {
-								"value": "@replace(pipeline().parameters.FileName,'Sales','')",
+							"items": {
+								"value": "@pipeline().parameters.FileList",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@greaterOrEquals(item(),4)",
 								"type": "Expression"
 							}
 						}
 					},
 					{
-						"name": "Delete file",
-						"type": "Delete",
+						"name": "ForEach1",
+						"type": "ForEach",
 						"dependsOn": [
 							{
-								"activity": "Set value for file type",
+								"activity": "File Filter",
 								"dependencyConditions": [
 									"Succeeded"
 								]
 							}
 						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
 						"userProperties": [],
 						"typeProperties": {
-							"dataset": {
-								"referenceName": "TxtFilePath",
-								"type": "DatasetReference",
-								"parameters": {}
+							"items": {
+								"value": "@array(activity('File Filter').output.value)",
+								"type": "Expression"
 							},
-							"logStorageSettings": {
-								"linkedServiceName": {
-									"referenceName": "TestBlobStorage",
-									"type": "LinkedServiceReference"
-								},
-								"path": "adf-input"
-							},
-							"enableLogging": true,
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"fileListPath": "adf-output/FileList.docx",
-								"enablePartitionDiscovery": false
-							}
+							"activities": [
+								{
+									"name": "TestSPCall",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[dbo].[TestActivity]",
+										"storedProcedureParameters": {
+											"Activity": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"item": {
+												"value": {
+													"value": "@item()",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "AzureSqlDatabase",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
 						}
 					}
 				],
 				"parameters": {
-					"FileName": {
-						"type": "string",
-						"defaultValue": "DailySales"
-					}
-				},
-				"variables": {
-					"FileType": {
-						"type": "String"
+					"FileList": {
+						"type": "array",
+						"defaultValue": [
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9
+						]
 					}
 				},
 				"folder": {
@@ -603,46 +746,20 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/TxtFilePath')]",
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ExecutePipelineActivityTest')]",
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
-					{
-						"name": "Execute Pipeline1",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [
-							{
-								"name": "ExcecutePipeline",
-								"value": "Execute pipeline from activity"
-							}
-						],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ActivityTest",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"FileName": "DailySales"
-							}
-						}
-					}
-				],
 				"folder": {
 					"name": "Demo"
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/ActivityTest')]"
-			]
+			"dependsOn": []
 		}
 	]
 }
