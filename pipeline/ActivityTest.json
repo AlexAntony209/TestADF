@@ -3,16 +3,59 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Set variable1",
+				"name": "Set value for file type",
 				"type": "SetVariable",
 				"dependsOn": [],
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "FileType",
+					"value": {
+						"value": "@replace(pipeline().parameters.FileName,'Sales','')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Delete file",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Set value for file type",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "TxtFilePath",
+						"type": "DatasetReference"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"wildcardFileName": {
+							"value": "@{variables('FileType')}",
+							"type": "Expression"
+						},
+						"enablePartitionDiscovery": false
+					}
+				}
 			}
 		],
 		"parameters": {
 			"FileName": {
 				"type": "string",
-				"defaultValue": "Daily"
+				"defaultValue": "DailySales"
 			}
 		},
 		"variables": {
