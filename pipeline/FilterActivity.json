@@ -34,7 +34,45 @@
 					"items": {
 						"value": "@activity('File Filter').output",
 						"type": "Expression"
-					}
+					},
+					"activities": [
+						{
+							"name": "TestSPCall",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[TestActivity]",
+								"storedProcedureParameters": {
+									"Activity": {
+										"value": {
+											"value": "@pipeline().DataFactory",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"item": {
+										"value": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
 				}
 			}
 		],
