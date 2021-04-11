@@ -1,0 +1,55 @@
+{
+	"name": "SourceDataset_ffx",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "TestBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Sheet1",
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "Temp.xlsx",
+				"container": "adf-input"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Supplier",
+				"type": "String"
+			},
+			{
+				"name": "Search Term",
+				"type": "String"
+			},
+			{
+				"name": "Display Order",
+				"type": "String"
+			},
+			{
+				"name": "Start Date",
+				"type": "String"
+			},
+			{
+				"name": "End Date",
+				"type": "String"
+			},
+			{
+				"name": "Link (Product Code)",
+				"type": "String"
+			},
+			{
+				"name": "ExperiationDate",
+				"type": "String"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
