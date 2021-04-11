@@ -2,7 +2,7 @@
 	"name": "Every 5 mins on Event",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Stopped",
+		"runtimeState": "Started",
 		"pipelines": [
 			{
 				"pipelineReference": {
