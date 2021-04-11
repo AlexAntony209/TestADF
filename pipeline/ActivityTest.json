@@ -51,7 +51,7 @@
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": true,
 						"wildcardFileName": {
-							"value": "@{variables('FileType')}+'.txt'",
+							"value": "concat(@{variables('FileType')},'.txt')",
 							"type": "Expression"
 						},
 						"enablePartitionDiscovery": false
