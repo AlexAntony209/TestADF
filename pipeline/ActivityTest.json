@@ -49,7 +49,10 @@
 					"enableLogging": true,
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
-						"recursive": true,
+						"fileListPath": {
+							"value": "@concat(variables('FileType'),'List.txt')",
+							"type": "Expression"
+						},
 						"enablePartitionDiscovery": false
 					}
 				}
