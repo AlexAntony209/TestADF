@@ -50,11 +50,11 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@array(activity('GetFileDetails').output.itemName)",
+						"value": "@array(activity('GetFileDetails').output.childItems.name)",
 						"type": "Expression"
 					},
 					"condition": {
-						"value": "@equals(activity('GetFileDetails').output.itemName,variables('FilterValue'))",
+						"value": "@equals(activity('GetFileDetails').output.childItems.type,variables('FilterValue'))",
 						"type": "Expression"
 					}
 				}
@@ -63,7 +63,7 @@
 		"variables": {
 			"FilterValue": {
 				"type": "String",
-				"defaultValue": "TestSubFolder"
+				"defaultValue": "File"
 			}
 		},
 		"folder": {
