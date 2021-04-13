@@ -38,8 +38,8 @@
 				}
 			},
 			{
-				"name": "TestFilter",
-				"type": "Filter",
+				"name": "ForEach1",
+				"type": "ForEach",
 				"dependsOn": [
 					{
 						"activity": "GetFileDetails",
@@ -54,10 +54,7 @@
 						"value": "@array(activity('GetFileDetails').output.childItems)",
 						"type": "Expression"
 					},
-					"condition": {
-						"value": "@equals(activity('GetFileDetails').output.childItems,variables('FilterValue'))",
-						"type": "Expression"
-					}
+					"isSequential": true
 				}
 			}
 		],
