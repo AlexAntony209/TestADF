@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "TestMetadata",
+						"referenceName": "TestFileList",
 						"type": "DatasetReference"
 					},
 					"fieldList": [
@@ -30,7 +30,7 @@
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
-						"type": "BinaryReadSettings"
+						"type": "DelimitedTextReadSettings"
 					}
 				}
 			},
