@@ -17,12 +17,14 @@
 				"typeProperties": {
 					"dataset": {
 						"referenceName": "TestFileList",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"ContainerName": "adf-output",
+							"DirectoryName": "TestSubFolder"
+						}
 					},
 					"fieldList": [
-						"itemName",
-						"itemType",
-						"lastModified"
+						"childItems"
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
