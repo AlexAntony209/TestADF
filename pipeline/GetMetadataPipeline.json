@@ -50,7 +50,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@array(activity('GetFileDetails').output.childItems.name)",
+						"value": "@array(activity('GetFileDetails').output.childItems)",
 						"type": "Expression"
 					},
 					"condition": {
