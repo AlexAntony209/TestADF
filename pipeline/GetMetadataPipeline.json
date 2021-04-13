@@ -92,8 +92,8 @@
 												"storeSettings": {
 													"type": "AzureBlobStorageReadSettings",
 													"recursive": true,
-													"modifiedDatetimeStart": "2021-04-11T00:00:00.000Z",
-													"modifiedDatetimeEnd": "2021-04-12T00:00:00.000Z",
+													"modifiedDatetimeStart": "2021-04-13T00:00:00.000Z",
+													"modifiedDatetimeEnd": "2021-04-14T00:00:00.000Z",
 													"deleteFilesAfterCompletion": false
 												},
 												"formatSettings": {
