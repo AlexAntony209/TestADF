@@ -26,6 +26,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -51,12 +52,18 @@
 						"type": "Expression"
 					},
 					"condition": {
-						"value": "@equals(activity('GetFileDetails').output.itemName,'TestSubFolder')",
+						"value": "@equals(activity('GetFileDetails').output.itemName,variables('FilterValue'))",
 						"type": "Expression"
 					}
 				}
 			}
 		],
+		"variables": {
+			"FilterValue": {
+				"type": "String",
+				"defaultValue": "TestSubFolder"
+			}
+		},
 		"folder": {
 			"name": "Demo"
 		},
