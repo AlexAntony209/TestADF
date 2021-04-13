@@ -16,10 +16,6 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": "*.*",
-				"folderPath": {
-					"value": "@dataset().FilePath",
-					"type": "Expression"
-				},
 				"container": "adf-output"
 			}
 		}
