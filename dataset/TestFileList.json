@@ -1,0 +1,31 @@
+{
+	"name": "TestFileList",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "TestBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ContainerName": {
+				"type": "String"
+			},
+			"DirectoryName": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "TestSubFolder",
+				"container": "adf-output"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
