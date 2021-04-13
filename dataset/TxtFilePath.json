@@ -5,13 +5,21 @@
 			"referenceName": "TestBlobStorage",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"FilePath": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Binary",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": "*.*",
-				"folderPath": "TestSubFolder",
+				"folderPath": {
+					"value": "@dataset().FilePath",
+					"type": "Expression"
+				},
 				"container": "adf-output"
 			}
 		}
