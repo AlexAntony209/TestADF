@@ -10,8 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "*.txt",
-				"folderPath": "adf-output/TestFiles/",
+				"folderPath": "TestSubFolder",
 				"container": "adf-output"
 			}
 		}
