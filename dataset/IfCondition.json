@@ -1,0 +1,17 @@
+{
+	"name": "IfCondition",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "TestBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "adf-output"
+			}
+		}
+	}
+}
