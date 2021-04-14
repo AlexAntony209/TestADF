@@ -81,6 +81,10 @@
 											"type": "DatasetReference",
 											"parameters": {
 												"FolderPath": {
+													"value": "@pipeline().parameters.FolderPath",
+													"type": "Expression"
+												},
+												"FileName": {
 													"value": "@pipeline().parameters.FileName",
 													"type": "Expression"
 												}
