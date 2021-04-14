@@ -34,6 +34,10 @@
 											"type": "DatasetReference",
 											"parameters": {
 												"FolderPath": {
+													"value": "@pipeline().parameters.FolderPath",
+													"type": "Expression"
+												},
+												"FileName": {
 													"value": "@pipeline().parameters.FileName",
 													"type": "Expression"
 												}
@@ -104,9 +108,13 @@
 			}
 		],
 		"parameters": {
-			"FileName": {
+			"FolderPath": {
 				"type": "string",
 				"defaultValue": "Test"
+			},
+			"FileName": {
+				"type": "string",
+				"defaultValue": "File.txt"
 			}
 		},
 		"folder": {
