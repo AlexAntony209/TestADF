@@ -1,0 +1,27 @@
+{
+	"name": "SwitchDelete",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "TestBlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FolderPath": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "File.txt",
+				"folderPath": {
+					"value": "@dataset().FolderPath",
+					"type": "Expression"
+				},
+				"container": "adf-output"
+			}
+		}
+	}
+}
