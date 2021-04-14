@@ -1,0 +1,9 @@
+{
+	"name": "LookupActivityPipeline",
+	"properties": {
+		"folder": {
+			"name": "Demo"
+		},
+		"annotations": []
+	}
+}
