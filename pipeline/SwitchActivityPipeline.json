@@ -5,7 +5,14 @@
 			{
 				"name": "Switch1",
 				"type": "Switch",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Validation1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"on": {
@@ -108,6 +115,30 @@
 							]
 						}
 					]
+				}
+			},
+			{
+				"name": "Validation1",
+				"type": "Validation",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "SwitchDelete",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": {
+								"value": "@pipeline().parameters.FolderPath",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@pipeline().parameters.FileName",
+								"type": "Expression"
+							}
+						}
+					},
+					"timeout": "7.00:00:00",
+					"sleep": 10
 				}
 			}
 		],
