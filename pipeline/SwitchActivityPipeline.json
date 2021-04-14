@@ -137,7 +137,7 @@
 							}
 						}
 					},
-					"timeout": "7.00:00:00",
+					"timeout": "0.00:00:30",
 					"sleep": 10
 				}
 			}
@@ -145,7 +145,7 @@
 		"parameters": {
 			"FolderPath": {
 				"type": "string",
-				"defaultValue": "Test"
+				"defaultValue": "TestSubFolder"
 			},
 			"FileName": {
 				"type": "string",
