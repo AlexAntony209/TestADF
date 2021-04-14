@@ -29,6 +29,70 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/WebActivityPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Web1",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://dummy.restapiexample.com/api/v1/employees",
+							"method": "GET",
+							"headers": {}
+						}
+					},
+					{
+						"name": "Web2",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Web1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://dummy.restapiexample.com/create",
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
+							},
+							"body": {
+								"name": "test1",
+								"salary": "123",
+								"age": "23"
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "Demo"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -83,157 +147,44 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DestinationDataset_ffx')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/Every 5 mins on Event')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase",
-					"type": "LinkedServiceReference"
-				},
 				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Start Date",
-						"type": "date",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "End Date",
-						"type": "date",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "Link (Product Code)",
-						"type": "varchar",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "ExperiationDate",
-						"type": "date",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "IsDeleted",
-						"type": "int",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "Supplier",
-						"type": "varchar",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "Search Term",
-						"type": "varchar",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "Display Order",
-						"type": "int",
-						"precision": 10,
-						"scale": 0
-					}
-				],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"schema": "dbo",
-					"table": "Test1"
+					"blobPathBeginsWith": "/adf-output/blobs/",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Every 5 mins on Event_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
+			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SourceDataset_ffx')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/Every five minutes')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "TestBlobStorage",
-					"type": "LinkedServiceReference"
-				},
 				"annotations": [],
-				"type": "Excel",
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
 				"typeProperties": {
-					"sheetName": "Sheet1",
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "Temp.xlsx",
-						"container": "adf-input"
-					},
-					"firstRowAsHeader": true
-				},
-				"schema": [
-					{
-						"name": "Supplier",
-						"type": "String"
-					},
-					{
-						"name": "Search Term",
-						"type": "String"
-					},
-					{
-						"name": "Display Order",
-						"type": "String"
-					},
-					{
-						"name": "Start Date",
-						"type": "String"
-					},
-					{
-						"name": "End Date",
-						"type": "String"
-					},
-					{
-						"name": "Link (Product Code)",
-						"type": "String"
-					},
-					{
-						"name": "ExperiationDate",
-						"type": "String"
-					},
-					{
-						"name": "IsDeleted",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TxtFilePath')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "TestBlobStorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "*.*",
-						"folderPath": "TestSubFolder",
-						"container": "adf-output"
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 5,
+						"startTime": "2021-04-10T04:46:00Z",
+						"timeZone": "UTC"
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/FilterActivity')]",
@@ -341,6 +292,282 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DestinationDataset_ffx')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Start Date",
+						"type": "date",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "End Date",
+						"type": "date",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "Link (Product Code)",
+						"type": "varchar",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "ExperiationDate",
+						"type": "date",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "IsDeleted",
+						"type": "int",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "Supplier",
+						"type": "varchar",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "Search Term",
+						"type": "varchar",
+						"precision": 0,
+						"scale": 0
+					},
+					{
+						"name": "Display Order",
+						"type": "int",
+						"precision": 10,
+						"scale": 0
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Test1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/IfCondition')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TestBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "adf-output"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/IfConditionTest')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TestBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "adf-output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceDataset_ffx')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TestBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "Sheet1",
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Temp.xlsx",
+						"container": "adf-input"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "Supplier",
+						"type": "String"
+					},
+					{
+						"name": "Search Term",
+						"type": "String"
+					},
+					{
+						"name": "Display Order",
+						"type": "String"
+					},
+					{
+						"name": "Start Date",
+						"type": "String"
+					},
+					{
+						"name": "End Date",
+						"type": "String"
+					},
+					{
+						"name": "Link (Product Code)",
+						"type": "String"
+					},
+					{
+						"name": "ExperiationDate",
+						"type": "String"
+					},
+					{
+						"name": "IsDeleted",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SwitchDelete')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TestBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderPath": {
+						"type": "String"
+					},
+					"FileName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().FolderPath",
+							"type": "Expression"
+						},
+						"container": "adf-output"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TestFileList')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TestBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"ContainerName": {
+						"type": "String"
+					},
+					"DirectoryName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "TestSubFolder",
+						"container": "adf-output"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/TestMetadata')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -354,8 +581,35 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "*.txt",
-						"folderPath": "TestFiles",
+						"folderPath": "TestSubFolder",
+						"container": "adf-output"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TxtFilePath')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "TestBlobStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FilePath": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "TestSubFolder",
 						"container": "adf-output"
 					}
 				}
@@ -406,7 +660,12 @@
 							"dataset": {
 								"referenceName": "TxtFilePath",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"FilePath": {
+										"value": "@pipeline().parameters.FileName",
+										"type": "Expression"
+									}
+								}
 							},
 							"logStorageSettings": {
 								"linkedServiceName": {
@@ -622,63 +881,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DeletePipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "DeleteTextZFiles",
-						"type": "Delete",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "FilesDeleted",
-								"value": "Delete txt file from adf output folder"
-							}
-						],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "TxtFilePath",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"logStorageSettings": {
-								"linkedServiceName": {
-									"referenceName": "TestBlobStorage",
-									"type": "LinkedServiceReference"
-								},
-								"path": "adf-input"
-							},
-							"enableLogging": true,
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
-								"wildcardFileName": "*.txt",
-								"enablePartitionDiscovery": false
-							}
-						}
-					}
-				],
-				"folder": {
-					"name": "Demo"
-				},
-				"annotations": [],
-				"lastPublishTime": "2021-04-10T04:57:00Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/TxtFilePath')]",
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/GetMetadataPipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -698,27 +900,30 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataset": {
-								"referenceName": "TestMetadata",
+								"referenceName": "TestFileList",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"ContainerName": "adf-output",
+									"DirectoryName": "TestSubFolder"
+								}
 							},
 							"fieldList": [
-								"itemName",
-								"itemType",
-								"lastModified"
+								"childItems",
+								"itemName"
 							],
 							"storeSettings": {
 								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
 								"enablePartitionDiscovery": false
 							},
 							"formatSettings": {
-								"type": "BinaryReadSettings"
+								"type": "DelimitedTextReadSettings"
 							}
 						}
 					},
 					{
-						"name": "TestFilter",
-						"type": "Filter",
+						"name": "ForEach1",
+						"type": "ForEach",
 						"dependsOn": [
 							{
 								"activity": "GetFileDetails",
@@ -730,23 +935,287 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@array(activity('GetFileDetails').output.itemName)",
+								"value": "@array(activity('GetFileDetails').output.childItems)",
 								"type": "Expression"
 							},
-							"condition": {
-								"value": "@equals(activity('GetFileDetails').output.itemName,'TestSubFolder')",
-								"type": "Expression"
-							}
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "FileTypeConditionFilter",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Set File Name",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(item().type,'File')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "CopyDataIfTrue",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "BinarySource",
+														"storeSettings": {
+															"type": "AzureBlobStorageReadSettings",
+															"recursive": true,
+															"modifiedDatetimeStart": "2021-04-13T00:00:00.000Z",
+															"modifiedDatetimeEnd": "2021-04-14T00:00:00.000Z",
+															"deleteFilesAfterCompletion": true
+														},
+														"formatSettings": {
+															"type": "BinaryReadSettings"
+														}
+													},
+													"sink": {
+														"type": "BinarySink",
+														"storeSettings": {
+															"type": "AzureBlobStorageWriteSettings"
+														}
+													},
+													"enableStaging": false
+												},
+												"inputs": [
+													{
+														"referenceName": "TxtFilePath",
+														"type": "DatasetReference",
+														"parameters": {
+															"FilePath": {
+																"value": "@variables('FileName')",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "IfCondition",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												]
+											}
+										]
+									}
+								},
+								{
+									"name": "Set File Name",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "FileName",
+										"value": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						}
 					}
 				],
+				"variables": {
+					"FilterValue": {
+						"type": "String",
+						"defaultValue": "File"
+					},
+					"FileName": {
+						"type": "String"
+					}
+				},
 				"folder": {
 					"name": "Demo"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/TestMetadata')]"
+				"[concat(variables('factoryId'), '/datasets/TestFileList')]",
+				"[concat(variables('factoryId'), '/datasets/TxtFilePath')]",
+				"[concat(variables('factoryId'), '/datasets/IfCondition')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SwitchActivityPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Switch1",
+						"type": "Switch",
+						"dependsOn": [
+							{
+								"activity": "Validation1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"on": {
+								"value": "@pipeline().parameters.FileName",
+								"type": "Expression"
+							},
+							"cases": [
+								{
+									"value": "Test",
+									"activities": [
+										{
+											"name": "Delete1",
+											"type": "Delete",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"dataset": {
+													"referenceName": "SwitchDelete",
+													"type": "DatasetReference",
+													"parameters": {
+														"FolderPath": {
+															"value": "@pipeline().parameters.FolderPath",
+															"type": "Expression"
+														},
+														"FileName": {
+															"value": "@pipeline().parameters.FileName",
+															"type": "Expression"
+														}
+													}
+												},
+												"logStorageSettings": {
+													"linkedServiceName": {
+														"referenceName": "TestBlobStorage",
+														"type": "LinkedServiceReference"
+													},
+													"path": "adf-input"
+												},
+												"enableLogging": true,
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"enablePartitionDiscovery": false
+												}
+											}
+										}
+									]
+								},
+								{
+									"value": "TestSubFolder",
+									"activities": [
+										{
+											"name": "Delete2",
+											"type": "Delete",
+											"dependsOn": [],
+											"policy": {
+												"timeout": "7.00:00:00",
+												"retry": 0,
+												"retryIntervalInSeconds": 30,
+												"secureOutput": false,
+												"secureInput": false
+											},
+											"userProperties": [],
+											"typeProperties": {
+												"dataset": {
+													"referenceName": "SwitchDelete",
+													"type": "DatasetReference",
+													"parameters": {
+														"FolderPath": {
+															"value": "@pipeline().parameters.FolderPath",
+															"type": "Expression"
+														},
+														"FileName": {
+															"value": "@pipeline().parameters.FileName",
+															"type": "Expression"
+														}
+													}
+												},
+												"logStorageSettings": {
+													"linkedServiceName": {
+														"referenceName": "TestBlobStorage",
+														"type": "LinkedServiceReference"
+													},
+													"path": "adf-input"
+												},
+												"enableLogging": true,
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"enablePartitionDiscovery": false
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "Validation1",
+						"type": "Validation",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "SwitchDelete",
+								"type": "DatasetReference",
+								"parameters": {
+									"FolderPath": {
+										"value": "@pipeline().parameters.FolderPath",
+										"type": "Expression"
+									},
+									"FileName": {
+										"value": "@pipeline().parameters.FileName",
+										"type": "Expression"
+									}
+								}
+							},
+							"timeout": "0.00:00:30",
+							"sleep": 10
+						}
+					}
+				],
+				"parameters": {
+					"FolderPath": {
+						"type": "string",
+						"defaultValue": "TestSubFolder"
+					},
+					"FileName": {
+						"type": "string",
+						"defaultValue": "File.txt"
+					}
+				},
+				"folder": {
+					"name": "Demo"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SwitchDelete')]",
+				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
 			]
 		},
 		{
@@ -784,66 +1253,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/ActivityTest')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Every 5 mins on Event')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "DeletePipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/adf-output/blobs/",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('Every 5 mins on Event_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/DeletePipeline')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Every five minutes')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "DeletePipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 5,
-						"startTime": "2021-04-10T04:46:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/DeletePipeline')]"
 			]
 		}
 	]

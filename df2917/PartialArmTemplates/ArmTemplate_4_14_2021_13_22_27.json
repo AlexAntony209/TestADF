@@ -6,22 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "df2917"
-		},
-		"AzureSqlDatabase_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase'"
-		},
-		"TestBlobStorage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'TestBlobStorage'"
-		},
-		"TestSQLConnectionParameter_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'TestSQLConnectionParameter'"
-		},
-		"Every 5 mins on Event_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/384a0a14-b856-4b55-a480-d4582287b1f9/resourceGroups/rg_storageAccount/providers/Microsoft.Storage/storageAccounts/azureblobstorage2917"
 		}
 	},
 	"variables": {
@@ -110,326 +94,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/TxtFilePath')]",
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CopyPipeline_ffx')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy_ffx",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "adf-input//Temp.xlsx"
-							},
-							{
-								"name": "Destination",
-								"value": "dbo.Test1"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "ExcelSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": false,
-									"enablePartitionDiscovery": false
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink"
-							},
-							"enableStaging": false,
-							"enableSkipIncompatibleRow": false,
-							"validateDataConsistency": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "Start Date",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Start Date",
-											"type": "DateTime",
-											"physicalType": "date"
-										}
-									},
-									{
-										"source": {
-											"name": "End Date",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "End Date",
-											"type": "DateTime",
-											"physicalType": "date"
-										}
-									},
-									{
-										"source": {
-											"name": "Link (Product Code)",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Link (Product Code)",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "ExperiationDate",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "ExperiationDate",
-											"type": "DateTime",
-											"physicalType": "date"
-										}
-									},
-									{
-										"source": {
-											"name": "IsDeleted",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "IsDeleted",
-											"type": "Int32",
-											"physicalType": "int"
-										}
-									},
-									{
-										"source": {
-											"name": "Supplier",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Supplier",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "Search Term",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Search Term",
-											"type": "String",
-											"physicalType": "varchar"
-										}
-									},
-									{
-										"source": {
-											"name": "Display Order",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Display Order",
-											"type": "Int32",
-											"physicalType": "int"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SourceDataset_ffx",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DestinationDataset_ffx",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Demo"
-				},
-				"annotations": [],
-				"lastPublishTime": "2021-04-09T19:26:49Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SourceDataset_ffx')]",
-				"[concat(variables('factoryId'), '/datasets/DestinationDataset_ffx')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ExecutePipelineActivityTest')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Execute Pipeline1",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [
-							{
-								"name": "ExcecutePipeline",
-								"value": "Execute pipeline from activity"
-							}
-						],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ActivityTest",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"FileName": "DailySales"
-							}
-						}
-					}
-				],
-				"folder": {
-					"name": "Demo"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/ActivityTest')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/FilterActivity')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "File Filter",
-						"type": "Filter",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@pipeline().parameters.FileList",
-								"type": "Expression"
-							},
-							"condition": {
-								"value": "@greaterOrEquals(item(),4)",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "File Filter",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@array(activity('File Filter').output.value)",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "TestSPCall",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[dbo].[TestActivity]",
-										"storedProcedureParameters": {
-											"Activity": {
-												"value": {
-													"value": "@pipeline().Pipeline",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"item": {
-												"value": {
-													"value": "@item()",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "AzureSqlDatabase",
-										"type": "LinkedServiceReference"
-									}
-								}
-							]
-						}
-					}
-				],
-				"parameters": {
-					"FileList": {
-						"type": "array",
-						"defaultValue": [
-							1,
-							2,
-							3,
-							4,
-							5,
-							6,
-							7,
-							8,
-							9
-						]
-					}
-				},
-				"folder": {
-					"name": "Demo"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
+				"[concat(variables('factoryId'), '/datasets/TxtFilePath')]"
 			]
 		},
 		{
@@ -559,8 +224,7 @@
 												"outputs": [
 													{
 														"referenceName": "IfCondition",
-														"type": "DatasetReference",
-														"parameters": {}
+														"type": "DatasetReference"
 													}
 												]
 											}
@@ -766,8 +430,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SwitchDelete')]",
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
+				"[concat(variables('factoryId'), '/datasets/SwitchDelete')]"
 			]
 		},
 		{
@@ -790,8 +453,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"url": "https://dummy.restapiexample.com/api/v1/employees",
-							"method": "GET",
-							"headers": {}
+							"method": "GET"
 						}
 					},
 					{
@@ -835,76 +497,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DestinationDataset_ffx')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Start Date",
-						"type": "date",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "End Date",
-						"type": "date",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "Link (Product Code)",
-						"type": "varchar",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "ExperiationDate",
-						"type": "date",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "IsDeleted",
-						"type": "int",
-						"precision": 10,
-						"scale": 0
-					},
-					{
-						"name": "Supplier",
-						"type": "varchar",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "Search Term",
-						"type": "varchar",
-						"precision": 0,
-						"scale": 0
-					},
-					{
-						"name": "Display Order",
-						"type": "int",
-						"precision": 10,
-						"scale": 0
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Test1"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/IfCondition')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -922,9 +514,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/IfConditionTest')]",
@@ -973,68 +563,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SourceDataset_ffx')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "TestBlobStorage",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Excel",
-				"typeProperties": {
-					"sheetName": "Sheet1",
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "Temp.xlsx",
-						"container": "adf-input"
-					},
-					"firstRowAsHeader": true
-				},
-				"schema": [
-					{
-						"name": "Supplier",
-						"type": "String"
-					},
-					{
-						"name": "Search Term",
-						"type": "String"
-					},
-					{
-						"name": "Display Order",
-						"type": "String"
-					},
-					{
-						"name": "Start Date",
-						"type": "String"
-					},
-					{
-						"name": "End Date",
-						"type": "String"
-					},
-					{
-						"name": "Link (Product Code)",
-						"type": "String"
-					},
-					{
-						"name": "ExperiationDate",
-						"type": "String"
-					},
-					{
-						"name": "IsDeleted",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SwitchDelete')]",
@@ -1070,9 +599,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TestFileList')]",
@@ -1106,9 +633,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TestMetadata')]",
@@ -1129,9 +654,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TxtFilePath')]",
@@ -1157,62 +680,6 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/TestBlobStorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('AzureSqlDatabase_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TestBlobStorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Test",
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": "[parameters('TestBlobStorage_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TestSQLConnectionParameter')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"parameters": {
-					"Server": {
-						"type": "string"
-					},
-					"Database": {
-						"type": "string"
-					},
-					"UserName": {
-						"type": "string"
-					},
-					"Password": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('TestSQLConnectionParameter_connectionString')]"
-				}
-			},
 			"dependsOn": []
 		},
 		{
@@ -1227,7 +694,7 @@
 				"typeProperties": {
 					"blobPathBeginsWith": "/adf-output/blobs/",
 					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('Every 5 mins on Event_properties_typeProperties_scope')]",
+					"scope": "/subscriptions/384a0a14-b856-4b55-a480-d4582287b1f9/resourceGroups/rg_storageAccount/providers/Microsoft.Storage/storageAccounts/azureblobstorage2917",
 					"events": [
 						"Microsoft.Storage.BlobCreated"
 					]
