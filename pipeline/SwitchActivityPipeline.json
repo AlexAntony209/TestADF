@@ -1,0 +1,9 @@
+{
+	"name": "SwitchActivityPipeline",
+	"properties": {
+		"folder": {
+			"name": "Demo"
+		},
+		"annotations": []
+	}
+}
