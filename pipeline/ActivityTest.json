@@ -37,7 +37,13 @@
 				"typeProperties": {
 					"dataset": {
 						"referenceName": "TxtFilePath",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"FilePath": {
+								"value": "@pipeline().parameters.FileName",
+								"type": "Expression"
+							}
+						}
 					},
 					"logStorageSettings": {
 						"linkedServiceName": {
